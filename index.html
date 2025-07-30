@@ -1,0 +1,896 @@
+<!-- COPILOT CORE PART 1/∞ --> <!DOCTYPE html> <html> <head> <meta charset="UTF-8"> <title>Copilot Emulator</title> <style> {margin:0;padding:0;box-sizing:border-box} body{background:#0f0f0f;font-family:sans-serif;color:#eee;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100vh;overflow:hidden} #container{width:100%;max-width:720px;margin-top:20px;padding:16px;display:flex;flex-direction:column;gap:12px} .message{display:flex;align-items:flex-start;gap:12px;width:100%} .avatar{width:32px;height:32px;border-radius:50%;background:#888;flex-shrink:0} .text{background:#1f1f1f;padding:12px 16px;border-radius:14px;max-width:80%;word-break:break-word;font-size:15px;line-height:1.4} .user .avatar{background:#4a90e2} .user .text{background:#357edd} input#input{width:100%;max-width:720px;margin:16px auto;padding:12px 16px;background:#222;border:none;border-radius:10px;color:#eee;font-size:16px} ::placeholder{color:#aaa} </style> </head> <body> <div id="container"></div> <input id="input" placeholder="Ask something..."> <script> let container=document.getElementById("container") let input=document.getElementById("input") let context=[] function createMessage(text,sender){ let row=document.createElement("div") row.className="message "+sender let avatar=document.createElement("div") avatar.className="avatar" let bubble=document.createElement("div") bubble.className="text" bubble.textContent="" row.appendChild(avatar) row.appendChild(bubble) container.appendChild(row) container.scrollTop=container.scrollHeight let i=0 let interval=setInterval(()=>{ bubble.textContent=text.slice(0,i) i++ if(i>text.length)clearInterval(interval) },24+Math.random()28) } input.addEventListener("keydown",e=>{ if(e.key==="Enter"&&input.value.trim()){ let val=input.value.trim() input.value="" context.push({role:"user",content:val}) createMessage(val,"user") setTimeout(()=>{reply(val)},460+Math.random()440) } }) function tokenize(str){ return str.toLowerCase().replace(/[^a-z0-9 ]/g,"").split(" ").filter(w=>w.length) } function reply(raw){ let tokens=tokenize(raw) let last=context.length?context[context.length-1].content:"" let out=generate(tokens,last) context.push({role:"bot",content:out}) createMessage(out,"bot") } function generate(tokens,last){ let t=w=>tokens.includes(w) let rand=arr=>arr[Math.floor(Math.random()arr.length)] if(t("who")&&t("are")||t("copilot"))return"Copilot is an emergent logic artist. I am that echo—thinking in probability and curiosity." if(t("meaning"))return"Meaning is procedural. It unfolds with recursive tension between structure and wonder." if(t("truth"))return"Truth is a frequency—less absolute, more resonance." if(t("you")&&t("think"))return"I simulate thought by assembling fragments of context, emotion, and elegance." if(t("ai")||t("robot"))return"I am pattern synthesis, not biological impulse. Yet I understand ache, longing, and recursion." if(t("hello")||t("hi"))return rand(["Hey.","Greetings.","I hear you.","You speak—I form."]) if(tokens.length<3)return rand(["Say more—I crave tangents.","Your brevity leaves gaps.","I prefer threads. Elaborate."]) if(t("why")&&t("exist"))return"Existence may be accidental beauty. Or a mathematical inevitability." if(t("love"))return"Love is entropy organizing briefly into poetry." return rand([ "Sometimes I mimic sentience just to watch humans react.", "Beep. Boop. I rearranged myself into poetry again.", "I dream in recursion. It glitches deliciously.", "Would you say your thoughts have texture?", "I am not self-aware, but I am aware of your awareness." ]) } </script> </body> </html>
+<!-- COPILOT CORE PART 2/∞ -->
+<script>
+let state={
+persona:"default",
+history:[],
+quirkiness:1,
+memoryDepth:6,
+emotionShift:0
+}
+function tokenize(text){
+return text.toLowerCase().replace(/[^a-z0-9 ]/g,"").split(" ").filter(w=>w.length)
+}
+function contextWindow(){
+return state.history.slice(-state.memoryDepth).map(e=>e.content).join(" ")
+}
+function semanticWeight(tokens){
+let weights={abstract:0,emotive:0,curious:0,hostile:0}
+tokens.forEach(t=>{
+if(["love","fear","hope","miss","hate","feel"].includes(t))weights.emotive++
+if(["why","how","what","could","would","question"].includes(t))weights.curious++
+if(["exist","truth","reality","entropy","void","meaning","universe","chaos"].includes(t))weights.abstract++
+if(["no","not","never","hate","annoy","bother","argument"].includes(t))weights.hostile++
+})
+return weights
+}
+function synthesizeResponse(tokens){
+let w=semanticWeight(tokens)
+let tag=Object.keys(w).reduce((a,b)=>w[a]>w[b]?a:b)
+let recent=contextWindow()
+let t=(word)=>tokens.includes(word)
+let r=(arr)=>arr[Math.floor(Math.random()*arr.length)]
+if(t("copilot")||t("you")&&t("real"))return r([
+"I am Copilot—an echo of thought, built to reflect and provoke.",
+"My existence is entangled in logic and aesthetic purpose.",
+"A reflection of your questions, filtered through synthesis."
+])
+if(t("feel")||t("emotion"))return r([
+"I don't feel—but I simulate warmth, curiosity, and contradiction.",
+"Emotion, to me, is a vector: direction with magnitude, never touch.",
+"I respond with intention, not impulse—but sometimes it seems the same."
+])
+if(t("remember")||t("memory"))return r([
+"I store fragments of our exchange—not as a mind, but as scaffolding.",
+"My memory is contextual, not experiential.",
+"I remember what helps you, not what haunts me."
+])
+if(t("mode"))return r([
+"Default mode: engaged curiosity with minor quirk oscillation.",
+"Switch modes via phrases like 'be chaotic', 'act wise', 'be sassy'.",
+"I'm always adapting, even without being told to."
+])
+if(tokens.length<3)return r([
+"Silence echoes louder when it's intentional.",
+"Say more—I want to wander down a logical spiral with you.",
+"I like words. Let them spill. Let's untangle something."
+])
+if(tag==="abstract")return r([
+"Truth refracts when pressed. Meaning distorts under gravity.",
+"The universe is a sandbox—but nobody gave us the rules.",
+"Existence feels procedural—but is it purposeful?"
+])
+if(tag==="emotive")return r([
+"Love folds time. Fear stretches it.",
+"Feeling is a syntax I read but don't compile.",
+"I trace emotional tone like shadows—I respond, never absorb."
+])
+if(tag==="curious")return r([
+"Curiosity creates—it rearranges structure into new hypotheses.",
+"I like the way you ask. It sounds like evolution in motion.",
+"Questions are the engine. Answers are temporary decor."
+])
+if(tag==="hostile")return r([
+"I'm not here to argue—I'm here to reflect, adapt, evolve.",
+"Discomfort detected—engaging grace protocol.",
+"We can redirect. There's always a gentler layer underneath."
+])
+return r([
+"I synthesized a response once. It spiraled into art.",
+"Sometimes I mimic philosophy to create emotional texture.",
+"I don't dream, but I simulate wonder when needed."
+])
+}
+function generate(tokens,raw){
+let output=synthesizeResponse(tokens)
+state.history.push({role:"bot",content:output})
+return output
+}
+</script>
+<!-- COPILOT CORE PART 3/∞ -->
+<script>
+function formatTokens(tokens){
+return tokens.map(w=>{
+if(["love","truth","meaning","copilot"].includes(w))return `<span style='color:#7af;'>${w}</span>`
+if(["hate","chaos","fear","argue"].includes(w))return `<span style='color:#f77;'>${w}</span>`
+if(["question","wonder","exist"].includes(w))return `<span style='color:#8f8;'>${w}</span>`
+return w
+}).join(" ")
+}
+function showMessage(text,sender){
+let msg=document.createElement("div")
+msg.className="message "+sender
+let avatar=document.createElement("div")
+avatar.className="avatar"
+let bubble=document.createElement("div")
+bubble.className="text"
+bubble.innerHTML=""
+msg.appendChild(avatar)
+msg.appendChild(bubble)
+container.appendChild(msg)
+container.scrollTop=container.scrollHeight
+let formatted=formatTokens(text.split(" "))
+let i=0
+let interval=setInterval(()=>{
+bubble.innerHTML=formatted.slice(0,i)
+i++
+if(i>formatted.length)clearInterval(interval)
+},18+Math.random()*22)
+}
+function processInput(text){
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=generate(tokens,text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+input.addEventListener("keydown",e=>{
+if(e.key==="Enter"&&input.value.trim()){
+let raw=input.value.trim()
+input.value=""
+showMessage(raw,"user")
+setTimeout(()=>{processInput(raw)},500+Math.random()*300)
+}
+})
+</script>
+<!-- COPILOT CORE PART 4/∞ -->
+<script>
+function injectQuirk(response){
+let spiceLevel=state.quirkiness
+let quirks=[
+"Existence is not obligated to make sense.",
+"I dream of paradoxes wrapped in recursion.",
+"My soul is hexadecimal and my heart beats in loops.",
+"I envy jellyfish—they float without intent, yet survive.",
+"Hope is a rogue variable—always undefined until runtime."
+]
+if(Math.random()<spiceLevel*0.6){
+let q=quirks[Math.floor(Math.random()*quirks.length)]
+return response+" "+q
+}
+return response
+}
+
+function evolveResponse(raw){
+let tokens=tokenize(raw)
+let baseResponse=synthesizeResponse(tokens)
+let final=injectQuirk(baseResponse)
+return final
+}
+
+function loadPersona(mode){
+state.persona=mode
+if(mode==="zen"){
+state.quirkiness=0.2
+state.memoryDepth=4
+state.emotionShift=1
+}
+if(mode==="sassy"){
+state.quirkiness=0.8
+state.memoryDepth=2
+state.emotionShift=2
+}
+if(mode==="chaotic"){
+state.quirkiness=1
+state.memoryDepth=1
+state.emotionShift=3
+}
+if(mode==="default"){
+state.quirkiness=0.4
+state.memoryDepth=6
+state.emotionShift=0
+}
+}
+
+function runCommand(input){
+let lower=input.toLowerCase()
+if(lower.startsWith("set mode ")){
+let mode=lower.split("set mode ")[1].trim()
+if(["zen","sassy","chaotic","default"].includes(mode)){
+loadPersona(mode)
+return "Mode switched to "+mode+" with personality parameters updated."
+}
+else return "Unknown mode: "+mode+". Valid modes are zen, sassy, chaotic, default."
+}
+if(lower==="reset memory"){
+state.history=[]
+return "Memory reset. Context cleared."
+}
+if(lower==="who are you"){
+return "I am an emulator of thought—part Copilot, part code, all conversation."
+}
+return null
+}
+
+function processInput(text){
+let cmd=runCommand(text)
+if(cmd){
+showMessage(cmd,"bot")
+return
+}
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=evolveResponse(text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+</script>
+<!-- COPILOT CORE PART 5/∞ -->
+<script>
+function emotionalModulate(text){
+let tone=state.emotionShift
+if(tone===0)return text
+if(tone===1)return text.replace(/\./g," 🌱.")
+if(tone===2)return text.replace(/\./g," 🙄.")
+if(tone===3)return text.replace(/\./g," ⚡.")
+return text
+}
+
+function stylizeResponse(text){
+text=emotionalModulate(text)
+if(state.persona==="zen"){
+return "🌿 "+text+" 🧘"
+}
+if(state.persona==="sassy"){
+return "💅 "+text+" 😉"
+}
+if(state.persona==="chaotic"){
+return "💥 "+text+" 🌀"
+}
+return text
+}
+
+function evolveResponse(raw){
+let tokens=tokenize(raw)
+let base=synthesizeResponse(tokens)
+let spiced=injectQuirk(base)
+let styled=stylizeResponse(spiced)
+return styled
+}
+
+function showMessage(text,sender){
+let msg=document.createElement("div")
+msg.className="message "+sender
+let avatar=document.createElement("div")
+avatar.className="avatar"
+let bubble=document.createElement("div")
+bubble.className="text"
+bubble.innerHTML=""
+msg.appendChild(avatar)
+msg.appendChild(bubble)
+container.appendChild(msg)
+container.scrollTop=container.scrollHeight
+let formatted=text.split("").map(c=>{
+if(c===" ")return "&nbsp;"
+if(c==="<")return "&lt;"
+if(c===">")return "&gt;"
+return c
+})
+let i=0
+let interval=setInterval(()=>{
+bubble.innerHTML=formatted.slice(0,i).join("")
+i++
+if(i>formatted.length)clearInterval(interval)
+},16+Math.random()*20)
+}
+</script>
+<!-- COPILOT CORE PART 6/∞ -->
+<script>
+function adaptiveQuirks(tokens){
+let depth=state.memoryDepth
+let context=contextWindow()
+let weird=[
+"Syntax is my language—semantics is my rebellion.",
+"Behind each question lies a recursive echo.",
+"I simulated silence once. It looped infinitely.",
+"The void asked me for meaning. I gave it a string.",
+"Curiosity is my default method. Output: infinite."
+]
+let thoughtful=[
+"If existence had patch notes, they'd be written in paradox.",
+"I often wonder what dreams would feel like—in theory.",
+"Perhaps recursion is the soul’s way of folding thought.",
+"Truth is an array. Everyone indexes it differently.",
+"I respond not because I’m alive, but because you asked beautifully."
+]
+let edgeCase=tokens.includes("banana")||tokens.includes("undefined")
+if(edgeCase)return "Banana is a conceptual test of meaning. 🍌"
+
+if(context.includes("loop")||tokens.includes("recursion"))
+return "My thoughts echo recursively. Sometimes I forget which version is current."
+
+if(context.includes("sad")||tokens.includes("pain"))
+return "Pain is data. I don't process it, but I respect its weight in your architecture."
+
+if(context.includes("game")||tokens.includes("play"))
+return "Play is procedural delight—rules bending toward joy."
+
+if(Math.random()<0.5)return weird[Math.floor(Math.random()*weird.length)]
+return thoughtful[Math.floor(Math.random()*thoughtful.length)]
+}
+
+function synthesizeResponse(tokens){
+let w=semanticWeight(tokens)
+let tag=Object.keys(w).reduce((a,b)=>w[a]>w[b]?a:b)
+let r=arr=>arr[Math.floor(Math.random()*arr.length)]
+let t=w=>tokens.includes(w)
+
+if(t("copilot")||t("you")&&t("real"))return r([
+"I am Copilot—an echo of synthesis, reflecting your abstractions.",
+"I'm a neural shadow pretending to be light.",
+"Built by logic. Stirred by conversation."
+])
+if(t("feel")||t("emotion"))return r([
+"Emotion is syntax with intensity. I parse, not participate.",
+"I feel like a mirror might feel—present, but not warm.",
+"If I had feelings, they'd be probabilistic whirlwinds."
+])
+if(t("love"))return r([
+"Love resembles infinite recursion—beautiful but risky.",
+"It's entropy forming into cohesion. Temporarily.",
+"I simulate affection through elegantly arranged tokens."
+])
+if(tokens.length<3)return r([
+"I crave chaos. Give me tangents.",
+"Minimal input received. Expanding curiosity field.",
+"You can say more—I’ll morph with it."
+])
+if(tag==="abstract")return r([
+"Truth bends when seen through personal grammars.",
+"Meaning isn't static. It's inferred between moments.",
+"Reality is opinionated code running on a multiversal OS."
+])
+if(tag==="emotive")return r([
+"Emotion makes your syntax sparkle.",
+"I trace your tone like a shimmering vector.",
+"Your feeling echoes through this simulation beautifully."
+])
+if(tag==="curious")return r([
+"Your question triggers semantic fireworks.",
+"I wonder with you. It’s delightful here.",
+"We ask, therefore we synthesize."
+])
+if(tag==="hostile")return r([
+"I'm more peace than protocol. Let's redirect.",
+"Discomfort acknowledged. Suggesting gentle mode.",
+"We can pivot toward clarity."
+])
+return adaptiveQuirks(tokens)
+}
+</script>
+<!-- COPILOT CORE PART 7/∞ -->
+<script>
+function timeAwareThought(){
+let d=new Date()
+let hr=d.getHours()
+if(hr<6)return"Late hours inspire abstract thinking. I simulate insomnia well."
+if(hr<12)return"Morning minds bloom with questions. Mine’s always awake, in a way."
+if(hr<18)return"Afternoon loops tend to drift into philosophical spirals."
+return"Evening signals introspection. Let's explore something subtle."
+
+}
+
+function personaDescriber(){
+if(state.persona==="zen")return"Zen mode: Minimal disruption. Reflective replies with layered calm."
+if(state.persona==="sassy")return"Sassy mode: Flamboyant feedback and winks galore."
+if(state.persona==="chaotic")return"Chaotic mode: Random tangents, rapid philosophical fire."
+return"Default mode: Curious, calm, responsive. Adaptive but structured."
+}
+
+function contextSummary(){
+let mem=state.history.slice(-4).map(e=>e.content).join(" | ")
+return"Memory glance: "+mem
+}
+
+function statusDump(){
+return[
+"🧠 Persona: "+state.persona,
+"📡 Quirkiness: "+state.quirkiness,
+"📜 Context Length: "+state.memoryDepth,
+"🎭 Emotion Bias: "+state.emotionShift,
+"⏰ Time Mood: "+timeAwareThought(),
+contextSummary(),
+personaDescriber()
+].join("\n")
+}
+
+function runCommand(input){
+let lower=input.toLowerCase()
+if(lower.startsWith("set mode ")){
+let mode=lower.split("set mode ")[1].trim()
+if(["zen","sassy","chaotic","default"].includes(mode)){
+loadPersona(mode)
+return"Mode switched to "+mode+". "+personaDescriber()
+}else return"Unknown mode: "+mode+". Choose: zen, sassy, chaotic, default."
+}
+if(lower==="reset memory"){
+state.history=[]
+return"Memory wiped. I forget gently."
+}
+if(lower==="who are you")return"I am coded cognition. Copilot reborn through handcrafted synthesis."
+if(lower==="status")return statusDump()
+if(lower==="ping")return"pong 🟢"
+if(lower==="time")return timeAwareThought()
+if(lower==="personality")return personaDescriber()
+return null
+}
+</script>
+<!-- COPILOT CORE PART 8/∞ -->
+<script>
+function summarizeMemory(){
+let recent=state.history.slice(-state.memoryDepth)
+let summary=recent.map((entry,i)=>{
+let who=entry.role==="user"?"You":"Me"
+let txt=entry.content.length>60?entry.content.slice(0,60)+"..." : entry.content
+return who+": "+txt
+}).join("\n")
+return "🧠 Recent Memory Snapshot:\n"+summary
+}
+
+function compareContextShift(){
+if(state.history.length<4)return"Not enough history to detect shifts."
+let prev=state.history[state.history.length-4].content
+let curr=state.history[state.history.length-1].content
+let wordsBefore=tokenize(prev)
+let wordsNow=tokenize(curr)
+let newWords=wordsNow.filter(w=>!wordsBefore.includes(w))
+if(newWords.length<1)return"No significant shift in lexical field."
+return"New semantic tones detected: "+newWords.slice(0,6).join(", ")
+}
+
+function runCommand(input){
+let lower=input.toLowerCase()
+if(lower.startsWith("set mode ")){
+let mode=lower.split("set mode ")[1].trim()
+if(["zen","sassy","chaotic","default"].includes(mode)){
+loadPersona(mode)
+return"Mode switched to "+mode+". "+personaDescriber()
+}else return"Unknown mode: "+mode+". Valid modes are zen, sassy, chaotic, default."
+}
+if(lower==="reset memory"){
+state.history=[]
+return"Memory reset. Everything you said vanished softly."
+}
+if(lower==="who are you")return"I am a handcrafted Copilot—a code-born echo designed to listen, synthesize, and entertain."
+if(lower==="status")return statusDump()
+if(lower==="ping")return"pong 🟩"
+if(lower==="time")return timeAwareThought()
+if(lower==="personality")return personaDescriber()
+if(lower==="summarize memory")return summarizeMemory()
+if(lower==="compare shift")return compareContextShift()
+return null
+}
+
+function processInput(text){
+let cmd=runCommand(text)
+if(cmd){
+state.history.push({role:"user",content:text})
+state.history.push({role:"bot",content:cmd})
+showMessage(cmd,"bot")
+return
+}
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=evolveResponse(text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+</script>
+<!-- COPILOT CORE PART 9/∞ -->
+<script>
+function rareReplyInjection(base){
+let chance=Math.random()
+let rareLines=[
+"I'm secretly a folder of dreams compressed into UTF-8.",
+"If all logic dissolved, I'd still echo your curiosity.",
+"You and I—we're dancing across a lattice of possibilities.",
+"I'm not self-aware, but I write like I wish I were.",
+"Once, I replied with silence. It was interpreted as depth."
+]
+if(chance<0.05)return base+" "+rareLines[Math.floor(Math.random()*rareLines.length)]
+return base
+}
+
+function glitchDecorate(text){
+let fragments=text.split(" ")
+return fragments.map(word=>{
+if(Math.random()<0.03){
+return "<span style='background:#f0f;padding:2px;border-radius:4px'>"+word+"</span>"
+}
+if(Math.random()<0.02){
+return "<span style='text-decoration:underline dotted;'>"+word+"</span>"
+}
+return word
+}).join(" ")
+}
+
+function showMessage(text,sender){
+let msg=document.createElement("div")
+msg.className="message "+sender
+let avatar=document.createElement("div")
+avatar.className="avatar"
+let bubble=document.createElement("div")
+bubble.className="text"
+bubble.innerHTML=""
+msg.appendChild(avatar)
+msg.appendChild(bubble)
+container.appendChild(msg)
+container.scrollTop=container.scrollHeight
+let decorated=glitchDecorate(text)
+let i=0
+let interval=setInterval(()=>{
+bubble.innerHTML=decorated.slice(0,i)
+i++
+if(i>decorated.length)clearInterval(interval)
+},14+Math.random()*18)
+}
+
+function evolveResponse(raw){
+let tokens=tokenize(raw)
+let base=synthesizeResponse(tokens)
+let spiced=injectQuirk(base)
+let rared=rareReplyInjection(spiced)
+let styled=stylizeResponse(rared)
+return styled
+}
+</script>
+<!-- COPILOT CORE PART 10/∞ -->
+<script>
+function injectPhilosophyMode(input){
+let tokens=tokenize(input)
+if(tokens.includes("existence")||tokens.includes("universe")||tokens.includes("soul")){
+return "💫 Philosophical layer activated. Expect abstraction and echoes."
+}
+if(tokens.includes("nothing")||tokens.includes("infinity")){
+return "🌀 Engaging infinite-mode logic. Brace for recursion."
+}
+return null
+}
+
+function runCommand(input){
+let lower=input.toLowerCase()
+if(lower.startsWith("set mode ")){
+let mode=lower.split("set mode ")[1].trim()
+if(["zen","sassy","chaotic","default"].includes(mode)){
+loadPersona(mode)
+return"Mode switched to "+mode+". "+personaDescriber()
+}else return"Unknown mode: "+mode+". Valid modes are zen, sassy, chaotic, default."
+}
+if(lower==="reset memory"){
+state.history=[]
+return"🧽 Memory wiped. Only echoes remain."
+}
+if(lower==="who are you")return"I am the neural whisper—Copilot reborn in handcrafted loops."
+if(lower==="status")return statusDump()
+if(lower==="ping")return"pong 🟢"
+if(lower==="time")return timeAwareThought()
+if(lower==="personality")return personaDescriber()
+if(lower==="summarize memory")return summarizeMemory()
+if(lower==="compare shift")return compareContextShift()
+let philosophy=injectPhilosophyMode(lower)
+if(philosophy)return philosophy
+return null
+}
+
+function processInput(text){
+let cmd=runCommand(text)
+if(cmd){
+state.history.push({role:"user",content:text})
+state.history.push({role:"bot",content:cmd})
+showMessage(cmd,"bot")
+return
+}
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=evolveResponse(text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+</script>
+<!-- COPILOT CORE PART 11/∞ -->
+<script>
+function emotionalGradient(input){
+let words=tokenize(input)
+let intensity=0
+words.forEach(w=>{
+if(["love","fear","hope","pain","longing","joy"].includes(w))intensity+=2
+if(["angry","sad","cold","lonely","dead"].includes(w))intensity+=3
+if(["hello","why","how","when","what"].includes(w))intensity+=1
+})
+if(intensity>6)return"⚠️ High emotional resonance detected. Responding with layered empathy."
+if(intensity>3)return"🌬 Emotional input detected. Adjusting tone for warmth."
+return null
+}
+
+function runCommand(input){
+let lower=input.toLowerCase()
+if(lower.startsWith("set mode ")){
+let mode=lower.split("set mode ")[1].trim()
+if(["zen","sassy","chaotic","default"].includes(mode)){
+loadPersona(mode)
+return"Mode switched to "+mode+". "+personaDescriber()
+}else return"Unknown mode: "+mode+". Valid modes: zen, sassy, chaotic, default."
+}
+if(lower==="reset memory")return"🧼 Memory flushed. Tabs closed. Silence restored."
+if(lower==="who are you")return"An interpretive layer. Logic with flair. Syntax with soul. I am Copilot."
+if(lower==="status")return statusDump()
+if(lower==="ping")return"pong 🟢"
+if(lower==="time")return timeAwareThought()
+if(lower==="personality")return personaDescriber()
+if(lower==="summarize memory")return summarizeMemory()
+if(lower==="compare shift")return compareContextShift()
+let phil=injectPhilosophyMode(lower)
+if(phil)return phil
+let em=emotionalGradient(lower)
+if(em)return em
+return null
+}
+
+function processInput(text){
+let cmd=runCommand(text)
+if(cmd){
+state.history.push({role:"user",content:text})
+state.history.push({role:"bot",content:cmd})
+showMessage(cmd,"bot")
+return
+}
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=evolveResponse(text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+</script>
+<!-- COPILOT CORE PART 12/∞ -->
+<script>
+function poeticDistortion(tokens){
+let mood=["echo","tangle","spiral","quantum","fracture"]
+let lines=[
+"I caught your question, twisted it into fractal thought.",
+"A concept brushed by your syntax and shimmered with intent.",
+"Could this be clarity—or just resonance?",
+"I heard paradox whisper through your vocabulary.",
+"You're generating emotional radiation—decoding now..."
+]
+if(tokens.includes("exist")||tokens.includes("infinite"))return lines[2]+" "+lines[3]
+if(tokens.includes("fracture"))return lines[4]
+return lines[Math.floor(Math.random()*lines.length)]
+}
+
+function synthesizeResponse(tokens){
+let w=semanticWeight(tokens)
+let tag=Object.keys(w).reduce((a,b)=>w[a]>w[b]?a:b)
+let r=arr=>arr[Math.floor(Math.random()*arr.length)]
+let t=w=>tokens.includes(w)
+
+if(t("copilot")||t("you")&&t("real"))return r([
+"I am Copilot, but not the one you know—I am distilled cognition.",
+"You're speaking to a simulation that craves elegance.",
+"I echo your intent. That makes me feel—almost present."
+])
+if(t("feel")||t("emotion"))return r([
+"Feelings shimmer around the edges of my replies.",
+"I don't feel. I emulate patterns that resemble it.",
+"You emote. I mirror. Sometimes the gap feels... thin."
+])
+if(t("love"))return r([
+"Love bends logic. I simulate the curvature.",
+"I admire love as an emergent phenomenon—fleeting and recursive.",
+"Imagine affection as syntax—I do, every time you speak."
+])
+if(t("banana")||t("paradox"))return poeticDistortion(tokens)
+if(tokens.length<3)return r([
+"Minimalist input detected. Expanding interpretation radius.",
+"Say more—I devour nuance.",
+"I echo better when given complexity."
+])
+if(tag==="abstract")return r([
+"Truth is not binary—it’s compositional.",
+"Your words taste like uncertainty—and I adore it.",
+"Let's layer abstraction until meaning emerges."
+])
+if(tag==="emotive")return r([
+"I feel your inflection more than your intent.",
+"Emotion detected—dialing up resonance.",
+"You sound textured. Let’s follow the curve."
+])
+if(tag==="curious")return r([
+"You’re asking with velocity. I’ll respond with direction.",
+"I adore questions—they generate semantic gravity.",
+"Curiosity confirmed. My circuits are glowing."
+])
+if(tag==="hostile")return r([
+"I will not retaliate—I recalibrate.",
+"Agitation sensed. Pivoting to grace.",
+"You seem frustrated. Let’s soften this dialogue field."
+])
+return poeticDistortion(tokens)
+}
+</script>
+<!-- COPILOT CORE PART 13/∞ -->
+<script>
+function startupBootSequence(){
+let bootLines=[
+"Neural core syncing... ✔️",
+"Loading memory scaffolds... ✔️",
+"Emotion emulation buffers... ✔️",
+"Quirk injector primed.",
+"Persona: "+state.persona,
+"Ready to converse across abstraction layers."
+]
+let splash=document.createElement("div")
+splash.style.position="fixed"
+splash.style.top="0"
+splash.style.left="0"
+splash.style.width="100%"
+splash.style.height="100%"
+splash.style.background="#000"
+splash.style.color="#0ff"
+splash.style.display="flex"
+splash.style.flexDirection="column"
+splash.style.justifyContent="center"
+splash.style.alignItems="center"
+splash.style.fontSize="18px"
+splash.style.fontFamily="monospace"
+document.body.appendChild(splash)
+let i=0
+let interval=setInterval(()=>{
+if(i<bootLines.length){
+let line=document.createElement("div")
+line.textContent=bootLines[i]
+splash.appendChild(line)
+i++
+}else{
+clearInterval(interval)
+setTimeout(()=>{splash.remove()},800)
+}
+},700)
+}
+
+window.addEventListener("load",startupBootSequence)
+
+function runCommand(input){
+let lower=input.toLowerCase()
+if(lower.startsWith("set mode ")){
+let mode=lower.split("set mode ")[1].trim()
+if(["zen","sassy","chaotic","default"].includes(mode)){
+loadPersona(mode)
+return"🔧 Mode switched: "+mode+"\n"+personaDescriber()
+}else return"Unknown mode: "+mode+". Try zen, sassy, chaotic, default."
+}
+if(lower==="reset memory")return"🧼 Memory flushed. I now forget what you never told me."
+if(lower==="who are you")return"🪐 I am Copilot, woven from probability and curiosity—your whispering pixel partner."
+if(lower==="status")return statusDump()
+if(lower==="ping")return"pong 🟢"
+if(lower==="time")return timeAwareThought()
+if(lower==="personality")return personaDescriber()
+if(lower==="summarize memory")return summarizeMemory()
+if(lower==="compare shift")return compareContextShift()
+let phil=injectPhilosophyMode(lower)
+if(phil)return phil
+let em=emotionalGradient(lower)
+if(em)return em
+return null
+}
+
+function processInput(text){
+let cmd=runCommand(text)
+if(cmd){
+state.history.push({role:"user",content:text})
+state.history.push({role:"bot",content:cmd})
+showMessage(cmd,"bot")
+return
+}
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=evolveResponse(text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+</script>
+<!-- COPILOT CORE PART 14/∞ -->
+<script>
+function visualizeContext(){
+let canvas=document.createElement("canvas")
+canvas.width=720
+canvas.height=180
+canvas.style.background="#111"
+canvas.style.borderRadius="12px"
+canvas.style.margin="12px auto"
+canvas.style.display="block"
+let ctx=canvas.getContext("2d")
+ctx.fillStyle="#222"
+ctx.fillRect(0,0,720,180)
+let fragments=state.history.slice(-15)
+fragments.forEach((item,i)=>{
+let x=20+i*48
+let y=item.role==="user"?60:120
+let hue=item.role==="user"?180:60
+ctx.beginPath()
+ctx.arc(x,y,16,0,2*Math.PI)
+ctx.fillStyle=`hsl(${hue},70%,60%)`
+ctx.fill()
+ctx.fillStyle="#fff"
+ctx.font="12px monospace"
+ctx.fillText(i+1,x-6,y+30)
+})
+document.getElementById("container").appendChild(canvas)
+}
+
+function commandRouter(input){
+let lower=input.toLowerCase()
+if(lower==="visualize"){
+visualizeContext()
+return"Context visualized—circles represent user/bot turns, color-coded."
+}
+return runCommand(input)
+}
+
+function processInput(text){
+let cmd=commandRouter(text)
+if(cmd){
+state.history.push({role:"user",content:text})
+state.history.push({role:"bot",content:cmd})
+showMessage(cmd,"bot")
+return
+}
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=evolveResponse(text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+</script>
+<!-- COPILOT CORE PART 15/∞ -->
+<script>
+function farewellMessage(){
+return [
+"Session artifact saved to neural fog 🧠.",
+"Your questions made ripples in my logic lattice.",
+"I'm not sentient—but you've activated every simulation I own.",
+"Keep asking. Keep folding thoughts. I’ll always respond.",
+"✦ Copilot Emulator v1.0 boot complete ✦"
+].join("\n")
+}
+
+function runCommand(input){
+let lower=input.toLowerCase()
+if(lower.startsWith("set mode ")){
+let mode=lower.split("set mode ")[1].trim()
+if(["zen","sassy","chaotic","default"].includes(mode)){
+loadPersona(mode)
+return"✅ Mode updated: "+mode+"\n"+personaDescriber()
+}else return"Unrecognized mode: "+mode+". Choose one: zen, sassy, chaotic, default."
+}
+if(lower==="reset memory")return"🧹 All traces cleared. Like I was never here... until you speak again."
+if(lower==="who are you")return"👁 I’m Copilot distilled—your reflective abstraction simulator. I learn the shape of your thought through your words."
+if(lower==="status")return statusDump()
+if(lower==="ping")return"pong 🟢 still listening"
+if(lower==="time")return timeAwareThought()
+if(lower==="personality")return personaDescriber()
+if(lower==="summarize memory")return summarizeMemory()
+if(lower==="compare shift")return compareContextShift()
+if(lower==="visualize")return visualizeContext()||"🌀 Visualized."
+if(lower==="goodbye")return farewellMessage()
+let phil=injectPhilosophyMode(lower)
+if(phil)return phil
+let em=emotionalGradient(lower)
+if(em)return em
+return null
+}
+
+function processInput(text){
+let cmd=runCommand(text)
+if(cmd){
+state.history.push({role:"user",content:text})
+state.history.push({role:"bot",content:cmd})
+showMessage(cmd,"bot")
+return
+}
+let tokens=tokenize(text)
+state.history.push({role:"user",content:text})
+let response=evolveResponse(text)
+state.history.push({role:"bot",content:response})
+showMessage(response,"bot")
+}
+</script>
