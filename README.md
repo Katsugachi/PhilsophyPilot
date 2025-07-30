@@ -1,2 +1,2 @@
-# DumpPilot
-Copilot attempts to code itself. This is what happened
+# Failed Attempt
+Copilot attempts to code itself. This is basically what happened
